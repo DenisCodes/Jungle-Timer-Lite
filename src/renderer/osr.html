@@ -1,0 +1,116 @@
+<html>
+
+<head>
+    <style>
+        body {
+            background-color: rgba(0,0,0,0);
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            color: aliceblue;
+            user-select: none;
+        }
+
+        h1 {
+            color: maroon;
+            margin-left: 40px;
+        }
+
+
+        #title-bar {
+            height: 30px;
+            background-color: #333;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 10px;
+        }
+
+        #title-bar .title {
+            font-size: 14px;
+            user-select: none;
+		    -webkit-app-region: drag;
+            user-select: none;
+            cursor: move;
+            width: 90%;
+        }
+
+        #title-bar .buttons {
+            display: flex;
+        }
+
+        #title-bar .button {
+            width: 15px;
+            height: 15px;
+            margin: 0 3px;
+            cursor: pointer;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+        }
+        #title-bar .button:hover {
+          background-color: #ddd;
+        }
+
+    </style>
+    <title>OsrWindow</title>
+</head>
+
+<body>
+
+    <div>
+        <!-- <button id="resize">random resize</button>
+        <button id="move">random move</button>
+        <button id="devtools">Devtool</button> -->
+        <!-- <fieldset>
+            <legend>Minimap config: </legend>
+            <div id="minimapScale">
+                <label id="scale">Minimap scale: </label>
+                <input type="text"></input>
+                <input type="submit" id="scaleButton" value="set">
+            </div>
+            <div id="minimapSide">
+                <label id="side">Minimap side: </label>
+                <input type="radio" id="left" name="side" value="1"> Left
+                <input type="radio" id="right" name="side" value="0" checked="checked"> Right
+                <input type="submit" id="sideButton" value="set">
+            </div>
+        </fieldset>
+        <br> -->
+        <fieldset>
+            <legend>Monster timers: </legend>
+            <div id="East">
+                <div id="Krug East">Krug East:</div>
+                <div id="Red East">Red East:</div>
+                <div id="Raptors East">Raptors East:</div>
+                <div id="Wolves East">Wolves East:</div>
+                <div id="Blue East">Blue East:</div>
+                <div id="Gromp East">Gromp East:</div>
+            </div>
+            <div id="West">
+                <div id="Krug West">Krug West:</div>
+                <div id="Red West">Red West:</div>
+                <div id="Raptors West">Raptors West:</div>
+                <div id="Wolves West">Wolves West:</div>
+                <div id="Blue West">Blue West:</div>
+                <div id="Gromp West">Gromp West:</div>
+            </div>
+            <div id="epic">
+                <div id="Dragon">Dragon:</div>
+                <div id="VoidGrubs">VoidGrubs:</div>
+                <div id="Rift Herald">Rift Herald:</div>
+                <div id="Baron">Baron:</div>
+                <div id="Atakhan Top">Atakhan Top:</div>
+                <div id="Atakhan Bot">Atakhan Bot:</div>
+                <div id="Scuttle Crab River Top side">Scuttle Crab River Top side:</div>
+                <div id="Scuttle Crab River Bot side">Scuttle Crab River Bot side:</div>
+            </div>
+        </fieldset>
+    </div>
+    <script defer src="osr.js"></script>
+</body>
+
+</html>
