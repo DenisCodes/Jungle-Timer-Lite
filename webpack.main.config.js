@@ -5,7 +5,8 @@ const config = require('./webpack.base.config');
 const mainConfig = { ...config };
 mainConfig.target = 'electron-main';
 mainConfig.entry = {
-  'index': './src/browser/index.ts',
+  index: './src/browser/index.ts',
+  minimap: './src/config/minimap.ts',
 };
 
 mainConfig.output = {

@@ -47,12 +47,12 @@ contextBridge.exposeInMainWorld('osr', {
       func(data);
     });
   },
-  setMinimapScale: (scale: number) => {
-    return ipcRenderer.invoke('osr-set-scale', scale);
-  },
-  setMinimapSide: (side: 0 | 1) => {
-    return ipcRenderer.invoke('osr-set-side', side);
-  },
+  // setMinimapScale: (scale: number) => {
+  //   return ipcRenderer.invoke('osr-set-scale', scale);
+  // },
+  // setMinimapSide: (side: 0 | 1) => {
+  //   return ipcRenderer.invoke('osr-set-side', side);
+  // },
 });
 
 contextBridge.exposeInMainWorld('overlay', {
@@ -66,3 +66,9 @@ contextBridge.exposeInMainWorld('overlay', {
     return ipcRenderer.invoke('updateExclusiveOptions', options);
   }
 });
+
+contextBridge.exposeInMainWorld('minimapAPI', {
+  setConfig: (cfg) => ipcRenderer.invoke('minimap:setConfig', cfg),
+  onConfig: (cb) => ipcRenderer.on('minimap-config', (_e, cfg) => cb(cfg)),
+});
+

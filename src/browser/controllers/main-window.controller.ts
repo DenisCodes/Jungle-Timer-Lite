@@ -6,6 +6,7 @@ import { OverlayService } from '../services/overlay.service';
 import { overwolf } from '@overwolf/ow-electron';
 import { OverlayHotkeysService } from '../services/overlay-hotkeys.service';
 import { ExclusiveHotKeyMode, OverlayInputService } from '../services/overlay-input.service';
+import { loadMinimapConfig, saveMinimapConfig } from '../../config/minimap';
 
 const owElectronApp = electronApp as overwolf.OverwolfApp;
 
@@ -82,11 +83,17 @@ export class MainWindowController {
         contextIsolation: true,
         devTools: showDevTools,
         // relative to root folder of the project
-        preload: path.join(__dirname, '../preload/preload.js'),
+        preload: path.join(__dirname, '../renderer/preload.js'),
       },
     });
 
     this.browserWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
+
+    // Once the renderer is ready, send over the persisted minimap config
+    const initialCfg = loadMinimapConfig();
+    this.browserWindow.webContents.once('did-finish-load', () => {
+      this.browserWindow.webContents.send('minimap-config', initialCfg);
+    });
   }
 
   /**
@@ -144,15 +151,27 @@ export class MainWindowController {
       }
     });
 
-    ipcMain.handle('osr-set-scale', async (_evt, scale: number) => {
-      console.log('[main] osr-set-scale received:', scale);
-      this.demoOsrController?.setMinimapScale(scale);
-    });
-    ipcMain.handle('osr-set-side', async (_evt, side: 0 | 1) => {
-      console.log('[main] osr-set-side received:', side);
-      this.demoOsrController?.setMinimapSide(side);
-    });
+    ipcMain.handle(
+      'minimap:setConfig',
+      async (_evt, { field, value }: { field: 'scale' | 'side'; value: number | boolean }) => {
+        console.log(`[main] minimap:setConfig received: ${field} =`, value);
 
+        // 1) Persist to JSON
+        const cfg = loadMinimapConfig();
+        // @ts-ignore
+        cfg[field] = value;
+        saveMinimapConfig(cfg);
+
+        // 2) Push the updated config back to the main renderer so it can re‐render inputs
+        this.browserWindow.webContents.send('minimap-config', cfg);
+
+        // 3) If the OSR window is already open, apply immediately
+        if (this.demoOsrController) {
+          if (field === 'scale') this.demoOsrController.setMinimapScale(value as number);
+          if (field === 'side')  this.demoOsrController.setMinimapSide(value as boolean);
+        }
+      }
+    );
   }
 
   /**
@@ -160,6 +179,10 @@ export class MainWindowController {
    */
   private async createOSRDemoWindow(): Promise<void> {
     this.demoOsrController = this.createDemoOsrWinController();
+
+    const { scale, side } = loadMinimapConfig();
+    this.demoOsrController.setMinimapScale(scale);
+    this.demoOsrController.setMinimapSide(side);
 
     const showDevTools = true;
     await this.demoOsrController.createAndShow(showDevTools);

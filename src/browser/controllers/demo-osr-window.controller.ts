@@ -1,11 +1,12 @@
 import path from "path";
 import { OverlayService } from '../services/overlay.service';
 import { OverlayBrowserWindow, OverlayWindowOptions, PassthroughType, ZOrderType } from "@overwolf/ow-electron-packages-types";
+import { loadMinimapConfig } from '../../config/minimap';
 
 export class DemoOSRWindowController {
   private overlayWindow: OverlayBrowserWindow = null;
   private minimapScale = 1.0;
-  private minimapSide: 0 | 1 = 0; 
+  private minimapSide: boolean; 
 
   public get overlayBrowserWindow() : OverlayBrowserWindow {
     return this.overlayWindow;
@@ -21,6 +22,12 @@ export class DemoOSRWindowController {
   }  
 
   public async createAndShow(showDevTools: boolean) {
+    const { scale, side } = loadMinimapConfig();
+    this.setMinimapScale(scale);
+    this.setMinimapSide(side);
+    console.log('scale: ',scale);
+    console.log('side: ',side);
+
     const options: OverlayWindowOptions = {
       name: 'osrWindow-' + Math.floor(Math.random() * 1000),
       height: 600,
@@ -30,7 +37,7 @@ export class DemoOSRWindowController {
       transparent: true,
       resizable: true,
       webPreferences: {
-        preload: path.join(__dirname, '../preload/preload.js'),
+        preload: path.join(__dirname, '../renderer/preload.js'),
         devTools: showDevTools,
         nodeIntegration: false,
         contextIsolation: true,
@@ -162,7 +169,7 @@ export class DemoOSRWindowController {
   }
 
   /** Called by IPC handler */
-  public setMinimapSide(side: 0 | 1) {
+  public setMinimapSide(side: boolean) {
     this.minimapSide = side;
     console.log('side: ',this.minimapSide);
     //this.updateOverlayWindow();

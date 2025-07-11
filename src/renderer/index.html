@@ -33,14 +33,14 @@
   <h2>Minimap config:</h2>
   <div>
     <label for="minimapScaleInput">Scale:</label>
-    <input type="text" id="minimapScaleInput" value="50">
-    <button id="applyMinimapScale" class="btn">Set Scale</button>
+    <input type="number" id="minimapScaleInput" value="50" />
+    <button id="applyMinimapScale">Apply Scale</button>
   </div>
   <div>
     <label>Side:</label>
-    <input type="radio" id="minimapSideLeft" name="minimapSide" value="1"> <label for="minimapSideLeft">Left</label>
-    <input type="radio" id="minimapSideRight" name="minimapSide" value="0" checked> <label for="minimapSideRight">Right</label>
-    <button id="applyMinimapSide" class="btn">Set Side</button>
+    <label><input type="radio" name="minimapSide" value="0" /> Left</label>
+    <label><input type="radio" name="minimapSide" value="1" checked/> Right</label>
+    <button id="applyMinimapSide">Apply Side</button>
   </div>
 </div>
 <br/>

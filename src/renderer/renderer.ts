@@ -1,10 +1,33 @@
-console.log('renderer script');
-console.log('[renderer] window.osr =', window.osr);
-console.log(
-  '[renderer] typeof setMinimapScale =',
-  typeof window.osr?.setMinimapScale
-);
+// src/renderer/renderer.ts
+window.addEventListener('DOMContentLoaded', () => {
+  const scaleInput    = document.getElementById('minimapScaleInput')  as HTMLInputElement;
+  const sideInputs    = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="minimapSide"]'));
+  const applyScaleBtn = document.getElementById('applyMinimapScale') as HTMLButtonElement;
+  const applySideBtn  = document.getElementById('applyMinimapSide')  as HTMLButtonElement;
 
+  // 1) Prefill on load (and after every save)
+  window.minimapAPI.onConfig((cfg) => {
+    scaleInput.value = String(cfg.scale);
+    sideInputs.forEach(i => i.checked = (i.value === (cfg.side ? '1' : '0')));
+  });
+
+  // 2) Send updates
+  applyScaleBtn.addEventListener('click', async () => {
+    const scale = parseInt(scaleInput.value, 10);
+    console.log('scale: ',scale);
+    await window.minimapAPI.setConfig({ field: 'scale', value: scale });
+  });
+
+  applySideBtn.addEventListener('click', async () => {
+    const sel = sideInputs.find(i => i.checked);
+    if (!sel) return;
+    const side = sel.value === '1';
+    console.log('side: ',side);
+    await window.minimapAPI.setConfig({ field: 'side', value: side });
+  });
+});
+
+console.log('renderer script loaded');
 
 //@ts-ignore
 window.gep.onMessage(function(...args) {
@@ -18,36 +41,6 @@ window.gep.onMessage(function(...args) {
 
 });
 
-
-const applyMinimapScaleBtn = document.querySelector('#applyMinimapScale') as HTMLButtonElement;
-applyMinimapScaleBtn.addEventListener('click', async () => {
-  try {
-    const scaleInput = document.querySelector('#minimapScaleInput') as HTMLInputElement;
-    const scale = parseFloat(scaleInput.value);
-    console.log('setting minimap scale to', scale);
-    await window.osr.setMinimapScale(scale);
-    addMessageToTerminal(`Minimap scale set to ${scale}`);
-  } catch (error) {
-    console.error('setMinimapScale error', error);
-    addMessageToTerminal(`Error setting minimap scale: ${error}`);
-    alert(`Error setting minimap scale: ${error}`);
-  }
-});
-
-const applyMinimapSideBtn = document.querySelector('#applyMinimapSide') as HTMLButtonElement;
-applyMinimapSideBtn.addEventListener('click', async () => {
-  try {
-    const sideInput = document.querySelector('input[name="minimapSide"]:checked') as HTMLInputElement;
-    const side = parseInt(sideInput.value, 10) as 0 | 1;
-    console.log('setting minimap side to', side === 1 ? 'left' : 'right');
-    await window.osr.setMinimapSide(side);
-    addMessageToTerminal(`Minimap side set to ${side === 1 ? 'Left' : 'Right'}`);
-  } catch (error) {
-    console.error('setMinimapSide error', error);
-    addMessageToTerminal(`Error setting minimap side: ${error}`);
-    alert(`Error setting minimap side: ${error}`);
-  }
-});
 
 const btn = document.querySelector('#clearTerminalTextAreaBtn') as HTMLButtonElement;
 
@@ -142,20 +135,20 @@ export function sendExclusiveOptions() {
 
 
 
-const opacityRange = document.getElementById('opacityRange') as HTMLInputElement;
-opacityRange.addEventListener('change', (ev) => {
-  sendExclusiveOptions();
-})
+// const opacityRange = document.getElementById('opacityRange') as HTMLInputElement;
+// opacityRange.addEventListener('change', (ev) => {
+//   sendExclusiveOptions();
+// })
 
-const animationDurationRange = document.getElementById('animationDurationRange') as HTMLInputElement;
-animationDurationRange.addEventListener('change', (ev) => {
-  sendExclusiveOptions();
-})
+// const animationDurationRange = document.getElementById('animationDurationRange') as HTMLInputElement;
+// animationDurationRange.addEventListener('change', (ev) => {
+//   sendExclusiveOptions();
+// })
 
-const colorPicker = document.getElementById('colorPicker') as HTMLInputElement;
-colorPicker.addEventListener('change', (ev) => {
-  sendExclusiveOptions();
-})
+// const colorPicker = document.getElementById('colorPicker') as HTMLInputElement;
+// colorPicker.addEventListener('change', (ev) => {
+//   sendExclusiveOptions();
+// })
 
 
 document.querySelectorAll('[name="behavior"]').forEach(
